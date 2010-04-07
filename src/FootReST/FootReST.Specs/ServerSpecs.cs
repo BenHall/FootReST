@@ -8,12 +8,18 @@ using Newtonsoft.Json.Linq;
 
 namespace FootReST.Specs
 {
-    public class ServerSpecs_Start
+    public class ServerSpecs_Start : IDisposable
     {
+        Server server;
+
+        public void Dispose()
+        {
+            server.Close();
+        }
         [Fact]
         public void Can_Start_Listening_On_Default_Port_5984()
         {
-            Server server = new Server();
+            server = new Server();
             bool started = server.Start();
             Assert.True(started);
 
@@ -30,14 +36,20 @@ namespace FootReST.Specs
         }
     }
 
-    public class ServerSpecs_Version
+    public class ServerSpecs_Version : IDisposable
     {
+        Server server;
         public ServerSpecs_Version()
         {
-            Server server = new Server();
+            server = new Server();
             server.Start();
         }
-        
+
+        public void Dispose()
+        {
+            server.Close();
+        }
+
         [Fact]
         public void Can_return_version_in_json_format()
         {
@@ -47,12 +59,23 @@ namespace FootReST.Specs
         }
 
         [Fact]
-        public void Can_override_version_to_return_coucdb_style()
+        public void Returns_welcome_message()
         {
-            Assert.True(false);
+            JsonRequester request = new JsonRequester();
+            JObject json = request.Get("127.0.0.1", "5984", "");
+            Assert.Equal("Welcome", json.Value<string>("footrest"));
+        }
+
+        [Fact]
+        public void Can_override_version_to_return_couchdb_style()
+        {
+            string returnMessage = "{\"couchdb\":\"Welcome\",\"version\":\"0.11.0\"}";
+            server.DefineRequest("/", returnMessage);
+
+            JsonRequester request = new JsonRequester();
+            JObject json = request.Get("127.0.0.1", "5984", "");
+            Assert.Equal("Welcome", json.Value<string>("couchdb"));
+            Assert.Equal("0.11.0", json.Value<string>("version"));
         }
     }
-
-
-
 }
