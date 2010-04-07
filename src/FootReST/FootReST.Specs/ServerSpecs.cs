@@ -70,7 +70,7 @@ namespace FootReST.Specs
         public void Can_override_version_to_return_couchdb_style()
         {
             string returnMessage = "{\"couchdb\":\"Welcome\",\"version\":\"0.11.0\"}";
-            server.DefineRequest("/", returnMessage);
+            server.DefineCustomResponse("/", returnMessage);
 
             JsonRequester request = new JsonRequester();
             JObject json = request.Get("127.0.0.1", "5984", "");
