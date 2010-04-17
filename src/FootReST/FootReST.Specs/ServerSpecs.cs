@@ -1,4 +1,5 @@
 ﻿using System;
+using FootReST.Specs.Infrastructure;
 using Xunit;
 using System.Net.Sockets;
 using Newtonsoft.Json.Linq;
@@ -67,7 +68,7 @@ namespace FootReST.Specs
         public void Can_override_version_to_return_couchdb_style()
         {
             string returnMessage = "{\"couchdb\":\"Welcome\",\"version\":\"0.11.0\"}";
-            server.DefineCustomResponse("/", returnMessage);
+            server.DefineCustomResponse("GET", "/", returnMessage);
 
             JsonRequester request = new JsonRequester();
             JObject json = request.Get("127.0.0.1", "5984", "");

@@ -46,7 +46,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JsonRequester.cs" />
+    <Compile Include="Infrastructure\JsonRequester.cs" />
+    <Compile Include="RequestHandlerSpecs.cs" />
     <Compile Include="ServerSpecs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

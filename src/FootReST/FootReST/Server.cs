@@ -29,9 +29,9 @@ namespace FootReST
             _server.Stop();
         }
 
-        public void DefineCustomResponse(string endpoint, string response)
+        public void DefineCustomResponse(string verb, string endpoint, string response)
         {
-            _handler.DefineCustomResponse(endpoint, response);
+            _handler.DefineCustomResponse(verb, endpoint, response);
         }
     }
 }

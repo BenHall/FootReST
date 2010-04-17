@@ -2,7 +2,7 @@
 using System.Net;
 using Newtonsoft.Json.Linq;
 
-namespace FootReST.Specs
+namespace FootReST.Specs.Infrastructure
 {
     public class JsonRequester
     {

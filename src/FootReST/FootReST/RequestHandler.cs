@@ -6,22 +6,31 @@ namespace FootReST
 {
     public class RequestHandler
     {
-        Dictionary<string, string> _responses;
-        private TcpListener _server;
+        readonly Dictionary<string, Dictionary<string, string>> _verbResponses;
+        private readonly TcpListener _server;
 
         public RequestHandler(TcpListener server)
         {
             _server = server;
-            _responses = new Dictionary<string, string>();
-            _responses.Add("/", "{\"footrest\":\"Welcome\",\"version\":\"0.1.0\"}");
+            _verbResponses = new Dictionary<string, Dictionary<string, string>>();
+            _verbResponses.Add("GET", new Dictionary<string, string>());
+            _verbResponses["GET"].Add("/", "{\"footrest\":\"Welcome\",\"version\":\"0.1.0\"}");
         }
 
-        public void DefineCustomResponse(string endpoint, string response)
+        public void DefineCustomResponse(string verb, string endpoint, string response)
         {
-            if (_responses.Keys.Contains(endpoint))
-                _responses.Remove(endpoint);
+            EnsureVerbExists(verb);
 
-            _responses.Add(endpoint, response);
+            if (_verbResponses[verb].Keys.Contains(endpoint))
+                _verbResponses[verb].Remove(endpoint);
+
+            _verbResponses[verb].Add(endpoint, response);
+        }
+
+        private void EnsureVerbExists(string verb)
+        {
+            if (!_verbResponses.ContainsKey(verb))
+                _verbResponses.Add(verb, new Dictionary<string, string>());
         }
 
         public void ProcessConnections()
@@ -31,23 +40,45 @@ namespace FootReST
 
             string request = NetworkStreamHandler.ReadStreamIntoString(ns);
 
-            if (request.StartsWith("GET "))
-            {
-                string endpoint = GetEndpoint("GET", request);
-                string response = _responses[endpoint];
-
-                NetworkStreamHandler.WriteOkResponse(ns);
-                NetworkStreamHandler.WriteStringToStream(ns, "Content-Length: " + response.Length);
-                NetworkStreamHandler.WriteStringToStream(ns, "");
-                NetworkStreamHandler.WriteStringToStream(ns, response);
-            }
+            HandleRequest(ns, request);
 
             NetworkStreamHandler.WriteStringToStream(ns, "");
 
             ns.Close();
         }
 
-        private static string GetEndpoint(string verb, string request)
+        private void HandleRequest(NetworkStream ns, string request)
+        {
+            string verb = GetRequestVerb(request);
+            string endpoint = GetRequestedEndpoint(verb, request);
+            string response = GetResponseForEndpoint(verb, endpoint);
+
+            WriteResponse(ns, response);
+        }
+
+        internal string GetRequestVerb(string request)
+        {
+            int indexOfSpace = request.IndexOf(" ");
+            return request.Substring(0, indexOfSpace);
+        }
+
+        private void WriteResponse(NetworkStream ns, string response)
+        {
+            NetworkStreamHandler.WriteOkResponse(ns);
+            NetworkStreamHandler.WriteStringToStream(ns, "Content-Length: " + response.Length);
+            NetworkStreamHandler.WriteStringToStream(ns, "");
+            NetworkStreamHandler.WriteStringToStream(ns, response);
+        }
+
+        internal string GetResponseForEndpoint(string verb, string endpoint)
+        {
+            if(_verbResponses.ContainsKey(verb) && _verbResponses[verb].ContainsKey(endpoint))
+                return _verbResponses[verb][endpoint];
+
+            return string.Empty;
+        }
+
+        internal string GetRequestedEndpoint(string verb, string request)
         {
             string endpointWithoutVerb = request.Substring(verb.Length + 1);
             int endOfRequest = endpointWithoutVerb.IndexOf(" ");

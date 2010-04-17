@@ -9,6 +9,11 @@ namespace FootReST
         public static void WriteOkResponse(NetworkStream ns)
         {
             WriteStringToStream(ns, "HTTP/1.1 200 OK");
+            WriteServerResponse(ns);
+        }
+
+        private static void WriteServerResponse(NetworkStream ns)
+        {
             WriteStringToStream(ns, "Server: FootReST/0.1.0");
             WriteStringToStream(ns, "Date: " + DateTime.Now);
             WriteStringToStream(ns, "Content-Type: text/plain;charset=utf-8");
