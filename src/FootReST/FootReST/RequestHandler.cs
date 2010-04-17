@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Net.Sockets;
 
 namespace FootReST
@@ -38,7 +36,7 @@ namespace FootReST
                 string endpoint = GetEndpoint("GET", request);
                 string response = _responses[endpoint];
 
-                NetworkStreamHandler.WriteOKResponse(ns);
+                NetworkStreamHandler.WriteOkResponse(ns);
                 NetworkStreamHandler.WriteStringToStream(ns, "Content-Length: " + response.Length);
                 NetworkStreamHandler.WriteStringToStream(ns, "");
                 NetworkStreamHandler.WriteStringToStream(ns, response);

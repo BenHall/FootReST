@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Threading;
 using System.Net;
 
@@ -13,16 +9,16 @@ namespace FootReST
         private int DefaultPort = 5984;
         private IPAddress IPAddress = IPAddress.Loopback;
 
-        TcpListener server;
-        RequestHandler handler;
+        TcpListener _server;
+        RequestHandler _handler;
 
         public bool Start()
         {
-            server = new TcpListener(IPAddress, DefaultPort);
-            server.Start();
+            _server = new TcpListener(IPAddress, DefaultPort);
+            _server.Start();
 
-            handler = new RequestHandler(server);
-            Thread thread = new Thread(new ThreadStart(handler.ProcessConnections));
+            _handler = new RequestHandler(_server);
+            Thread thread = new Thread(_handler.ProcessConnections);
             thread.Start();
             
             return true;
@@ -30,12 +26,12 @@ namespace FootReST
 
         public void Close()
         {
-            server.Stop();
+            _server.Stop();
         }
 
         public void DefineCustomResponse(string endpoint, string response)
         {
-            handler.DefineCustomResponse(endpoint, response);
+            _handler.DefineCustomResponse(endpoint, response);
         }
     }
 }

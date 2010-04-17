@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 
@@ -8,11 +6,11 @@ namespace FootReST
 {
     public class NetworkStreamHandler
     {
-        public static void WriteOKResponse(NetworkStream ns)
+        public static void WriteOkResponse(NetworkStream ns)
         {
             WriteStringToStream(ns, "HTTP/1.1 200 OK");
             WriteStringToStream(ns, "Server: FootReST/0.1.0");
-            WriteStringToStream(ns, "Date: " + DateTime.Now.ToString());
+            WriteStringToStream(ns, "Date: " + DateTime.Now);
             WriteStringToStream(ns, "Content-Type: text/plain;charset=utf-8");
         }
 

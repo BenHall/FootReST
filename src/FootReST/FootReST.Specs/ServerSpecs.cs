@@ -1,26 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xunit;
 using System.Net.Sockets;
 using Newtonsoft.Json.Linq;
 
 namespace FootReST.Specs
 {
-    public class ServerSpecs_Start : IDisposable
+    public class Server_specs_start : IDisposable
     {
-        Server server;
+        Server _server;
 
         public void Dispose()
         {
-            server.Close();
+            _server.Close();
         }
         [Fact]
         public void Can_Start_Listening_On_Default_Port_5984()
         {
-            server = new Server();
-            bool started = server.Start();
+            _server = new Server();
+            bool started = _server.Start();
             Assert.True(started);
 
             Assert_Port_Open("127.0.0.1", 5984);
@@ -36,10 +33,10 @@ namespace FootReST.Specs
         }
     }
 
-    public class ServerSpecs_Version : IDisposable
+    public class Server_specs_version : IDisposable
     {
         Server server;
-        public ServerSpecs_Version()
+        public Server_specs_version()
         {
             server = new Server();
             server.Start();
