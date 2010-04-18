@@ -2,11 +2,11 @@
 
 namespace FootReST.Specs
 {
-    public class RequestHandlerSpecs
+    public class RequestHandlerSpecs_Responses
     {
         RequestHandler handler;
 
-        public RequestHandlerSpecs()
+        public RequestHandlerSpecs_Responses()
         {
             handler = new RequestHandler(null);
             handler.DefineCustomResponse("GET", "endpoint", "response");            
@@ -55,6 +55,24 @@ namespace FootReST.Specs
         {
             string verb = handler.GetRequestVerb("GET REQUEST");
             Assert.Equal("GET", verb);
+        }
+    }
+
+    public class RequestHandlerSpecs_WildcardEndpoints
+    {
+        RequestHandler handler;
+
+        public RequestHandlerSpecs_WildcardEndpoints()
+        {
+            handler = new RequestHandler(null);
+            handler.DefineCustomResponse("GET", "end(.*?)", "response");            
+        }      
+
+        [Fact]
+        public void When_requesting_wildcard_endpoints_it_makes_on_any_part()
+        {
+            string response = handler.GetWildcardResponse("GET", "endpoint");
+            Assert.Equal("response", response);
         }
     }
 }

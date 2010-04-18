@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 
 namespace FootReST
 {
@@ -74,6 +75,20 @@ namespace FootReST
         {
             if(_verbResponses.ContainsKey(verb) && _verbResponses[verb].ContainsKey(endpoint))
                 return _verbResponses[verb][endpoint];
+
+            return GetWildcardResponse(verb, endpoint);
+        }
+
+        internal string GetWildcardResponse(string verb, string endpoint)
+        {
+            if (_verbResponses.ContainsKey(verb))
+            {
+                foreach (var possibleResponse in _verbResponses[verb])
+                {
+                    if (Regex.IsMatch(endpoint, possibleResponse.Key))
+                        return possibleResponse.Value;
+                }
+            }
 
             return string.Empty;
         }
